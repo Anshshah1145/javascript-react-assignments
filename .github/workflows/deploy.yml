@@ -1,0 +1,65 @@
+
+name: Deploy Assignments to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install and build assignments
+        run: |
+          for app in calculator todo-list form-validation profile-card controlled-form counter-app; do
+            echo "Building $app"
+            npm --prefix "$app" ci
+            npm --prefix "$app" run build
+          done
+
+      - name: Assemble website
+        run: |
+          mkdir -p site
+          cp -R calculator/dist site/assignment-1-calculator
+          cp -R todo-list/dist site/assignment-2-todo-list
+          cp -R form-validation/dist site/assignment-3-form-validation
+          cp -R profile-card/dist site/assignment-4-profile-card
+          cp -R controlled-form/dist site/assignment-5-controlled-form
+          cp -R counter-app/dist site/assignment-6-counter-app
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
