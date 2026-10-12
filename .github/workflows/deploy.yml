@@ -1,4 +1,4 @@
-
+```yaml
 name: Deploy Assignments to GitHub Pages
 
 on:
@@ -28,6 +28,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            calculator/package-lock.json
+            todo-list/package-lock.json
+            form-validation/package-lock.json
+            profile-card/package-lock.json
+            controlled-form/package-lock.json
+            counter-app/package-lock.json
 
       - name: Install and build assignments
         run: |
@@ -40,6 +48,11 @@ jobs:
       - name: Assemble website
         run: |
           mkdir -p site
+
+          # Include the main homepage
+          cp index.html site/index.html
+
+          # Include all six assignments
           cp -R calculator/dist site/assignment-1-calculator
           cp -R todo-list/dist site/assignment-2-todo-list
           cp -R form-validation/dist site/assignment-3-form-validation
@@ -56,6 +69,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
     needs: build
 
