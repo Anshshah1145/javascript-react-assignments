@@ -1,0 +1,16 @@
+
+{
+  "name": "javascript-react-assignments",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:calculator": "npm --prefix calculator run build",
+    "build:todo-list": "npm --prefix todo-list run build",
+    "build:form-validation": "npm --prefix form-validation run build",
+    "build:profile-card": "npm --prefix profile-card run build",
+    "build:controlled-form": "npm --prefix controlled-form run build",
+    "build:counter-app": "npm --prefix counter-app run build",
+    "build": "npm run build:calculator && npm run build:todo-list && npm run build:form-validation && npm run build:profile-card && npm run build:controlled-form && npm run build:counter-app"
+  }
+}
